@@ -135,19 +135,19 @@ function _field_list_dependent_options($entity_selected = '', $bundle = '') {
   $options = array();
   if (!empty($entity_selected) && ($entity_selected != '_none')) {
     $fields_info = field_info_instances($entity_selected);
-      if ($bundle == 'all') {
-        foreach ($fields_info as $fields => $values) {
-          foreach ($values as $field => $key) {
+    if ($bundle == 'all') {
+      foreach ($fields_info as $fields => $values) {
+        foreach ($values as $field => $key) {
           $options[$field] = $key['label'];
-          }
         }
       }
-      elseif ($bundle != '_none') {
-        $fields_list = $fields_info[$bundle];
-        foreach ($fields_list as $fields => $values) {
-          $options[$fields] = $values['label'];
-        }
+    }
+    elseif ($bundle != '_none') {
+      $fields_list = $fields_info[$bundle];
+      foreach ($fields_list as $fields => $values) {
+        $options[$fields] = $values['label'];
       }
+    }
   }
   if (isset($options)) {
     return $options;
