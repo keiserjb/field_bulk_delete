@@ -1,14 +1,14 @@
 <?php
- /**
-  @file
-  Primary hook implementations for Field Bulk Delete.
- /
+/**
+ * @file
+ * Primary hook implementations for Field Bulk Delete.
+ */
 
 /**
  * Implements hook_help().
  */
 function field_bulk_delete_help($path, $arg) {
- if ($path == 'admin/help#field_bulk_delete') {
+  if ($path == 'admin/help#field_bulk_delete') {
     return '<p>' . t('The Metatag module provides a options to let each page have customized meta data added to the "meta" tags in the HEAD section of the document.') . '</p>';
   }
 }
@@ -36,8 +36,8 @@ function field_bulk_delete_menu() {
     'page arguments' => array('field_bulk_delete_admin'),
     'access arguments' => array('administer field_bulk_delete settings'),
     'type' => MENU_NORMAL_ITEM,
-   );
-   return $items;
+  );
+  return $items;
 }
 /**
  * Implements hook_form().
@@ -51,10 +51,10 @@ function field_bulk_delete_admin($form, &$form_state) {
   $form['entity_type'] = array(
     '#type' => 'select',
     '#title' => t('Select entity type'),
-    '#options'=> $entity_options,
+    '#options' => $entity_options,
     '#default_value' => $entity_selected,
     '#required' => TRUE,
-    '#ajax' => array(     
+    '#ajax' => array(
       'callback' => 'entity_list_dependent_dropdown_callback',
       'wrapper' => 'dropdown-first-replace',
     ),
@@ -62,11 +62,11 @@ function field_bulk_delete_admin($form, &$form_state) {
   $form['bundle'] = array(
     '#type' => 'select',
     '#title' => t('Select bundle'),
-    '#options'=>  _get_bundle_list_options($entity_selected),
+    '#options' => _get_bundle_list_options($entity_selected),
     '#required' => TRUE,
     '#prefix' => '<div id="dropdown-first-replace">',
     '#suffix' => '</div>',
-    '#ajax' => array(     
+    '#ajax' => array(
       'callback' => 'field_list_dependent_dropdown_callback',
       'wrapper' => 'dropdown-second-replace',
     ),
@@ -91,8 +91,8 @@ function field_bulk_delete_admin($form, &$form_state) {
 function _get_entity_type_list_options() {
   $entity_types = field_info_bundles();
   $options = array('_none' => '--Select--');
-  foreach ($entity_types as $key => $value) {	
-  	$options[$key] = $key;
+  foreach ($entity_types as $key => $value) {
+    $options[$key] = $key;
   }
   return $options;
 }
@@ -100,13 +100,13 @@ function _get_entity_type_list_options() {
  * Get the list of bundle.
  */
 function _get_bundle_list_options($entity_selected = '') {
-	$entity_options = array();
-	$entity_options = array('all' => 'All');
-	if (!empty($entity_selected) && ($entity_selected != '_none')) {
-		$entity_types = field_info_bundles();
-		 foreach ($entity_types[$entity_selected] as $key => $value) {	
-  			$entity_options[$key] = $value['label'];
-  		 }
+  $entity_options = array();
+  $entity_options = array('all' => 'All');
+  if (!empty($entity_selected) && ($entity_selected != '_none')) {
+    $entity_types = field_info_bundles();
+    foreach ($entity_types[$entity_selected] as $key => $value) {
+      $entity_options[$key] = $value['label'];
+    }
   }
   return $entity_options;
 }
@@ -141,7 +141,7 @@ function _field_list_dependent_options($entity_selected = '', $bundle = '') {
           $options[$field] = $key['label'];
           }
         }
-      } 
+      }
       elseif ($bundle != '_none') {
         $fields_list = $fields_info[$bundle];
         foreach ($fields_list as $fields => $values) {
@@ -166,13 +166,13 @@ function field_bulk_delete_admin_submit($form, &$form_state) {
   foreach ($field_list as $field_name) {
     if ($bundle != 'all') {
       if (!empty($entity_type) && !empty($field_name) && !empty($bundle)) {
-        if ($instance = field_info_instance($entity_type, $field_name, $bundle)) {	
+        if ($instance = field_info_instance($entity_type, $field_name, $bundle)) {
           field_delete_instance($instance);
           drupal_set_message(t('Deleted the %field_name field from %bundle.', array('%field_name' => $field_name, '%bundle' => $bundle)), 'status');
-          watchdog('field_bulk_delete', 'Deleted the %field_name field from %bundle.', array('%field_name' => $field_name, '%bundle' => $bundle));   	
+          watchdog('field_bulk_delete', 'Deleted the %field_name field from %bundle.', array('%field_name' => $field_name, '%bundle' => $bundle));
         }
         else {
-          drupal_set_message(t('Somthing went wrong1, Please check.'), 'error');
+          drupal_set_message(t('Somthing went wrong, Please check.'), 'error');
         }
       }
     }
@@ -184,7 +184,7 @@ function field_bulk_delete_admin_submit($form, &$form_state) {
           watchdog('field_bulk_delete', 'Deleted the %field_name field from all instances.', array('%field_name' => $field_name));
         }
         else {
-          drupal_set_message(t('Somthing went wrong2, Please check.'), 'error');
+          drupal_set_message(t('Somthing went wrong, Please check.'), 'error');
         }
       }
     }
