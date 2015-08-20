@@ -28,9 +28,7 @@ function field_bulk_delete_permission() {
  * Implements hook_menu().
  */
 function field_bulk_delete_menu() {
-
   $items = array();
-
   $items['admin/config/content/field_bulk_delete'] = array(
     'title' => 'Field Bulk Delete',
     'description' => 'Field Bulk Delete',
@@ -39,21 +37,7 @@ function field_bulk_delete_menu() {
     'access arguments' => array('administer field_bulk_delete settings'),
     'type' => MENU_NORMAL_ITEM,
    );
-   $items['admin/config/content/field_bulk_delete/tab1'] = array(
-    'title' => 'Field Delete',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'weight' => -10
-  );
-  $items['admin/config/content/field_bulk_delete/tab2'] = array(
-    'title' => 'Field Data Delete',
-    'type' => MENU_LOCAL_TASK,
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('field_bulk_delete_admin'),
-    'access arguments' => array('administer field_bulk_delete settings'),
-  );
-
-  return $items;
-
+   return $items;
 }
 /**
  * Implements hook_form().
@@ -61,20 +45,12 @@ function field_bulk_delete_menu() {
 function field_bulk_delete_admin($form, &$form_state) {
   $form = array();
   $selected = '';
-  //$options = _get_node_type_list_options();
-  $fields_info = field_info_instances('node');
   $entity_options = _get_entity_type_list_options();
   $entity_selected = isset($form_state['values']['entity_type']) ? $form_state['values']['entity_type'] : key($entity_options);
-  $selected = isset($form_state['values']['node_type']) ? $form_state['values']['node_type'] : '_none';
- /* $form['delete'] = array(
-    '#type' => 'select',
-    '#title' => t('Select Function'),
-    '#options'=> array('0'=>'Delete Field','1'=>'Delete Field Data'),   
-    '#required' => TRUE,
-  );*/
+  $selected = isset($form_state['values']['bundle']) ? $form_state['values']['bundle'] : '_none';
   $form['entity_type'] = array(
     '#type' => 'select',
-    '#title' => t('Select Entity Type'),
+    '#title' => t('Select entity type'),
     '#options'=> $entity_options,
     '#default_value' => $entity_selected,
     '#required' => TRUE,
@@ -83,11 +59,10 @@ function field_bulk_delete_admin($form, &$form_state) {
       'wrapper' => 'dropdown-first-replace',
     ),
   );
-  $form['node_type'] = array(
+  $form['bundle'] = array(
     '#type' => 'select',
-    '#title' => t('Select Content Type'),
-    '#options'=>  _get_node_type_list_options($entity_selected),
-   // '#default_value' => $selected,
+    '#title' => t('Select bundle'),
+    '#options'=>  _get_bundle_list_options($entity_selected),
     '#required' => TRUE,
     '#prefix' => '<div id="dropdown-first-replace">',
     '#suffix' => '</div>',
@@ -103,7 +78,6 @@ function field_bulk_delete_admin($form, &$form_state) {
     '#prefix' => '<div id="dropdown-second-replace">',
     '#suffix' => '</div>',
     '#options' => _field_list_dependent_options($entity_selected,$selected),
-    //'#default_value' => isset($form_state['values']['field_list']) ? $form_state['values']['field_list'] : '',
   );
   $form['submit'] = array(
     '#type' => 'submit',
@@ -111,7 +85,9 @@ function field_bulk_delete_admin($form, &$form_state) {
   );
   return $form;
 }
-
+/**
+ * Get the list of entity type().
+ */
 function _get_entity_type_list_options() {
   $entity_types =field_info_bundles();
   $options = array('_none' =>'--Select--');
@@ -121,8 +97,10 @@ function _get_entity_type_list_options() {
   return $options;
 }
 
-
-function _get_node_type_list_options($entity_selected ='') {
+/**
+ * Get the list of bundle.
+ */
+function _get_bundle_list_options($entity_selected ='') {
 	$entity_options = array();
 	$entity_options = array('all' =>'All');
 	if(!empty($entity_selected) && ($entity_selected != '_none')){
@@ -133,39 +111,44 @@ function _get_node_type_list_options($entity_selected ='') {
 	}
   return $entity_options;
 }
-
+/**
+ * Callback function for field list field.
+ */
 function field_list_dependent_dropdown_callback($form, &$form_state) {
   return $form['field_list'];
 }
-
+/**
+ * Callback function for bundle and field list field.
+ */
 function entity_list_dependent_dropdown_callback($form, &$form_state) {
- // return $form['node_type'];
-   return array(
+  return array(
     '#type' => 'ajax',
     '#commands' => array(
-      ajax_command_replace("#dropdown-first-replace", render($form['node_type'])),
+      ajax_command_replace("#dropdown-first-replace", render($form['bundle'])),
       ajax_command_replace("#dropdown-second-replace", render($form['field_list']))
     )
   );
 }
-
-function _field_list_dependent_options($entity_selected ='', $node_type = '') {
+/**
+ * Get the list of field names.
+ */
+function _field_list_dependent_options($entity_selected ='', $bundle = '') {
   $options = array();
   if(!empty($entity_selected) && ($entity_selected != '_none')){
-  	$fields_info = field_info_instances($entity_selected);
-  	if($node_type == 'all'){
-  	  foreach($fields_info as $fields => $values){	 
-		  foreach($values as $field=>$key){
-		  	$options[$field] = $key['label'];
-		  }
-      } 
-  	} else if($node_type != '_none') {
-  		$fields_list = $fields_info[$node_type];
-          foreach($fields_list as $fields => $values){
-  	        $options[$fields] = $values['label'];
+    $fields_info = field_info_instances($entity_selected);
+      if($bundle == 'all'){
+        foreach($fields_info as $fields => $values){	 
+          foreach($values as $field=>$key){
+            $options[$field] = $key['label'];
           }
-  	 }
-  }
+        } 
+      } else if($bundle != '_none') {
+        $fields_list = $fields_info[$bundle];
+        foreach($fields_list as $fields => $values){
+          $options[$fields] = $values['label'];
+        }
+      }
+    }
   if (isset($options)) {
     return $options;
   }
@@ -173,41 +156,36 @@ function _field_list_dependent_options($entity_selected ='', $node_type = '') {
     return array();
   }
 }
-
+/**
+ * Submit handler for field_bulk_delete_admin().
+ */
 function field_bulk_delete_admin_submit($form, &$form_state){
-	//$delete_type = $form_state['values']['delete'];
-	$entity_type = $form_state['values']['entity_type'];
-	$node_type = $form_state['values']['node_type'];
-	$field_list =  $form_state['values']['field_list'];
-	//if($delete_type != 1){
-	foreach($field_list as $field_name){
-	  if($node_type != 'all') {
-	  	if ($instance = field_info_instance($entity_type, $field_name, $node_type)) {
-	  		//if($delete_type != 1){
-         		field_delete_instance($instance);
-       // } else{
-        	//field_attach_delete($entity_type, $field_name);
-       // }
-        	
-	  } else {
-		field_delete_field($field_name);
-		watchdog('field_bulk_delete', 'Deleted the :field_name field from all content type instances.', array(':field_name' => $field_name));	
-	  }	
-	}	 
-	  field_purge_batch(count($field_list)); 
-	} 	
- /*} else {
- 	
-		delete_field_values($entity_type, $entity, $field_list);
-	}*/
+  $entity_type = isset($form_state['values']['entity_type'])?$form_state['values']['entity_type']:'';
+  $bundle = isset($form_state['values']['bundle'])?$form_state['values']['bundle']:'';
+  $field_list =  isset($form_state['values']['field_list'])?$form_state['values']['field_list']:array();
+  foreach($field_list as $field_name){
+    if($bundle != 'all') {
+      if(!empty($entity_type) && !empty($field_name) && !empty($bundle)){
+        if ($instance = field_info_instance($entity_type, $field_name, $bundle)) {  	
+          field_delete_instance($instance);
+          drupal_set_message(t('Deleted the %field_name field from %bundle.', array('%field_name' => $field_name,'%bundle' => $bundle)), 'status');
+          watchdog('field_bulk_delete', 'Deleted the %field_name field from %bundle.', array('%field_name' => $field_name,'%bundle' => $bundle));      	
+        }else{
+          drupal_set_message(t('Somthing went wrong1, Please check.'), 'error');
+        }  
+      }	
+    } else {
+      if(!empty($entity_type) && !empty($field_name) && $bundle == 'all'){
+        if(field_info_field($field_name)){
+          field_delete_field($field_name);
+          drupal_set_message(t('Deleted the %field_name field from all instances.', array('%field_name' => $field_name)), 'status');
+          watchdog('field_bulk_delete', 'Deleted the %field_name field from all instances.', array('%field_name' => $field_name));		
+        }else{
+          drupal_set_message(t('Somthing went wrong2, Please check.'), 'error');
+        }
+      }
+    }		 
+    field_purge_batch(count($field_list)); 
+  } 
 }
 
-function delete_field_values($entity_type, $entity, $fields){
-  list($id, $vid, $bundle) = entity_extract_ids($entity_type, $entity);
-  foreach (field_info_instances($entity_type, $bundle) as $instance) {
-    if (isset($fields [$instance ['field_id']])) {
-      $field = field_info_field_by_id($instance ['field_id']);
-      field_sql_storage_field_storage_purge($entity_type, $entity, $field, $instance);
-    }
-  }
-}
