@@ -9,7 +9,7 @@
  */
 function field_bulk_delete_help($path, $arg) {
   if ($path == 'admin/help#field_bulk_delete') {
-    return '<p>' . t('The Metatag module provides a options to let each page have customized meta data added to the "meta" tags in the HEAD section of the document.') . '</p>';
+    return '<p>' . t('This module helps to delete the fields in all instances or particular instance in a single click.') . '</p>';
   }
 }
 
@@ -24,6 +24,7 @@ function field_bulk_delete_permission() {
   );
   return $permissions;
 }
+
 /**
  * Implements hook_menu().
  */
@@ -39,6 +40,7 @@ function field_bulk_delete_menu() {
   );
   return $items;
 }
+
 /**
  * Implements hook_form().
  */
@@ -85,23 +87,25 @@ function field_bulk_delete_admin($form, &$form_state) {
   );
   return $form;
 }
+
 /**
  * Get the list of entity type().
  */
 function _get_entity_type_list_options() {
   $entity_types = field_info_bundles();
-  $options = array('_none' => '--Select--');
+  $options = array('_none' => t('--Select--'));
   foreach ($entity_types as $key => $value) {
     $options[$key] = $key;
   }
   return $options;
 }
+
 /**
  * Get the list of bundle.
  */
 function _get_bundle_list_options($entity_selected = '') {
   $entity_options = array();
-  $entity_options = array('all' => 'All');
+  $entity_options = array('all' => t('All'));
   if (!empty($entity_selected) && ($entity_selected != '_none')) {
     $entity_types = field_info_bundles();
     foreach ($entity_types[$entity_selected] as $key => $value) {
@@ -110,12 +114,14 @@ function _get_bundle_list_options($entity_selected = '') {
   }
   return $entity_options;
 }
+
 /**
  * Callback function for field list field.
  */
 function field_list_dependent_dropdown_callback($form, &$form_state) {
   return $form['field_list'];
 }
+
 /**
  * Callback function for bundle and field list field.
  */
@@ -128,6 +134,7 @@ function entity_list_dependent_dropdown_callback($form, &$form_state) {
     ),
   );
 }
+
 /**
  * Get the list of field names.
  */
@@ -156,6 +163,7 @@ function _field_list_dependent_options($entity_selected = '', $bundle = '') {
     return array();
   }
 }
+
 /**
  * Submit handler for field_bulk_delete_admin().
  */
@@ -172,7 +180,7 @@ function field_bulk_delete_admin_submit($form, &$form_state) {
           watchdog('field_bulk_delete', 'Deleted the %field_name field from %bundle.', array('%field_name' => $field_name, '%bundle' => $bundle));
         }
         else {
-          drupal_set_message(t('Somthing went wrong, Please check.'), 'error');
+          drupal_set_message(t('Something went wrong, Please check.'), 'error');
         }
       }
     }
@@ -184,7 +192,7 @@ function field_bulk_delete_admin_submit($form, &$form_state) {
           watchdog('field_bulk_delete', 'Deleted the %field_name field from all instances.', array('%field_name' => $field_name));
         }
         else {
-          drupal_set_message(t('Somthing went wrong, Please check.'), 'error');
+          drupal_set_message(t('Something went wrong, Please check.'), 'error');
         }
       }
     }
