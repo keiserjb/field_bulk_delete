@@ -12,4 +12,3 @@ how to install or update Drupal modules.
 
 Once Field bulk delete is installed and enabled, you can delete your
 fields at admin/config/content/field_bulk_delete.
-
