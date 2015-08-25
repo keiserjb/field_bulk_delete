@@ -198,4 +198,5 @@ function field_bulk_delete_admin_submit($form, &$form_state) {
     }
     field_purge_batch(count($field_list));
   }
+$form_state['rebuild'] = TRUE;
 }
