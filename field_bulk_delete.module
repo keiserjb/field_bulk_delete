@@ -33,7 +33,7 @@ function field_bulk_delete_menu() {
   $items['admin/config/content/field_bulk_delete'] = array(
     'title' => 'Field Bulk Delete',
     'description' => 'Field Bulk Delete',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('field_bulk_delete_admin'),
     'access arguments' => array('administer field_bulk_delete settings'),
     'type' => MENU_NORMAL_ITEM,
@@ -176,11 +176,11 @@ function field_bulk_delete_admin_submit($form, &$form_state) {
       if (!empty($entity_type) && !empty($field_name) && !empty($bundle)) {
         if ($instance = field_info_instance($entity_type, $field_name, $bundle)) {
           field_delete_instance($instance);
-          drupal_set_message(t('Deleted the %field_name field from %bundle.', array('%field_name' => $field_name, '%bundle' => $bundle)), 'status');
+          backdrop_set_message(t('Deleted the %field_name field from %bundle.', array('%field_name' => $field_name, '%bundle' => $bundle)), 'status');
           watchdog('field_bulk_delete', 'Deleted the %field_name field from %bundle.', array('%field_name' => $field_name, '%bundle' => $bundle));
         }
         else {
-          drupal_set_message(t('Something went wrong, Please check.'), 'error');
+          backdrop_set_message(t('Something went wrong, Please check.'), 'error');
         }
       }
     }
@@ -188,11 +188,11 @@ function field_bulk_delete_admin_submit($form, &$form_state) {
       if (!empty($entity_type) && !empty($field_name) && $bundle == 'all') {
         if (field_info_field($field_name)) {
           field_delete_field($field_name);
-          drupal_set_message(t('Deleted the %field_name field from all instances.', array('%field_name' => $field_name)), 'status');
+          backdrop_set_message(t('Deleted the %field_name field from all instances.', array('%field_name' => $field_name)), 'status');
           watchdog('field_bulk_delete', 'Deleted the %field_name field from all instances.', array('%field_name' => $field_name));
         }
         else {
-          drupal_set_message(t('Something went wrong, Please check.'), 'error');
+          backdrop_set_message(t('Something went wrong, Please check.'), 'error');
         }
       }
     }

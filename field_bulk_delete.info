@@ -1,4 +1,5 @@
 name = Field Bulk Delete
 description = "Delete field's values and the fields."
-core = 7.x
+backdrop = 1.x
+type = module
 configure = admin/config/content/field_bulk_delete
