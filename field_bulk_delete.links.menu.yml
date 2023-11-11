@@ -1,0 +1,6 @@
+field_bulk_delete.settings:
+  title: 'Field Bulk Delete'
+  description: 'Delete fields in bulk from content types.'
+  parent: system.admin_config_content
+  route_name: field_bulk_delete.settings
+  weight: 100

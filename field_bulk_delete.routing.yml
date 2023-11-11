@@ -1,0 +1,7 @@
+field_bulk_delete.settings:
+  path: '/admin/config/content/field-bulk-delete'
+  defaults:
+    _form: '\Drupal\field_bulk_delete\Form\FieldBulkDeleteForm'
+    _title: 'Field Bulk Delete'
+  requirements:
+    _permission: 'administer site configuration'

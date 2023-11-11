@@ -1,0 +1,4 @@
+administer field bulk delete:
+  title: 'Administer field bulk delete'
+  description: 'Allows users to delete fields in bulk.'
+  restrict access: true

@@ -1,0 +1,7 @@
+name: 'Field Bulk Delete'
+type: module
+description: 'Delete field values and the fields themselves.'
+core_version_requirement: '^9 || ^10'
+package: Custom
+configure: field_bulk_delete.settings
+
